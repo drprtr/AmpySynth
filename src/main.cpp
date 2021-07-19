@@ -66,6 +66,8 @@ int g = 0;
 int b = 0;
 
 int encPos = 0;
+float flash = 25;
+float beatInterval = 950;
 
 void setup() {
   Serial.begin(115200);
@@ -112,12 +114,11 @@ void setup() {
 void loop() {
   iotWebConf.doLoop();
 
-
-  if (rtttl->isRunning()) {
-    if (!rtttl->loop()) {
-      rtttl->stop();
-    }
-  }
+  // if (rtttl->isRunning()) {
+  //   if (!rtttl->loop()) {
+  //     rtttl->stop();
+  //   }
+  // }
 
   //bool val = tca.readPin(TCA6424A_P00);
 
@@ -140,11 +141,41 @@ void loop() {
   }
   enc.setCount(encPos);
 
+  float bpm = 60;
+  switch (encPos) {
+    case 0: bpm = 60; break;
+    case 1: bpm = 65; break;
+    case 2: bpm = 70; break;
+    case 3: bpm = 75; break;
+    case 4: bpm = 80; break;
+    case 5: bpm = 85; break;
+    case 6: bpm = 90; break;
+    case 7: bpm = 100; break;
+    case 8: bpm = 110; break;
+    case 9: bpm = 120; break;
+    case 10: bpm = 130; break;
+    case 11: bpm = 140; break;
+    case 12: bpm = 160; break;
+    case 13: bpm = 180; break;
+    case 14: bpm = 200; break;
+    case 15: bpm = 240; break;
+  }
+
+  float beatRate = 60 / bpm;
+  float beatTime = beatRate * 1000;
+  beatInterval = beatTime - flash;
+
   FastLED.clear();
   leds[encPos].r = map(analogRead(POT_1), 0, 4096, 255, 0);
   leds[encPos].g = map(analogRead(POT_2), 0, 4096, 255, 0);
   leds[encPos].b = map(analogRead(POT_3), 0, 4096, 255, 0);
   FastLED.show();
+  delay(flash);
+  leds[encPos].r = 0;
+  leds[encPos].g = 0;
+  leds[encPos].b = 0;
+  FastLED.show();
+  delay(beatInterval);
 
 
 
