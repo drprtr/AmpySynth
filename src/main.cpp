@@ -66,8 +66,8 @@ int g = 0;
 int b = 0;
 
 int encPos = 0;
-float flash = 25;
-float beatInterval = 950;
+float flash = 25;          // length of led flash in milis
+float beatInterval = 975;  // default value for beat interval (60 bpm)
 
 void setup() {
   Serial.begin(115200);
@@ -161,21 +161,21 @@ void loop() {
     case 15: bpm = 240; break;
   }
 
-  float beatRate = 60 / bpm;
-  float beatTime = beatRate * 1000;
-  beatInterval = beatTime - flash;
+  float beatRate = 60 / bpm;         // convert bpm to seconds per beat
+  float beatMilis = beatRate * 1000; // convert to milis
+  beatInterval = beatMilis - flash;  // subtract length of flash
 
   FastLED.clear();
   leds[encPos].r = map(analogRead(POT_1), 0, 4096, 255, 0);
   leds[encPos].g = map(analogRead(POT_2), 0, 4096, 255, 0);
   leds[encPos].b = map(analogRead(POT_3), 0, 4096, 255, 0);
-  FastLED.show();
-  delay(flash);
+  FastLED.show();      // led on
+  delay(flash);        // for flash duration
   leds[encPos].r = 0;
   leds[encPos].g = 0;
   leds[encPos].b = 0;
-  FastLED.show();
-  delay(beatInterval);
+  FastLED.show();      // led off
+  delay(beatInterval); // pause between beats
 
 
 
